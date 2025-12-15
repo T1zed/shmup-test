@@ -35,10 +35,19 @@ public class PlayerBehavior : MonoBehaviour
         Vector3 autoMove = Vector3.right * autoMoveSpeed;
         Vector3 inputMove = movement * speed;
 
-        rb.MovePosition(
-            rb.position + (autoMove + inputMove) * Time.fixedDeltaTime
-        );
+        Vector3 newPos = rb.position + (autoMove + inputMove) * Time.fixedDeltaTime;
+
+        newPos.y = Mathf.Clamp(newPos.y, -8f, 11f);
+
+        float camHalfWidth = Camera.main.orthographicSize * Camera.main.aspect;
+        float minX = Camera.main.transform.position.x - camHalfWidth -7;
+        float maxX = Camera.main.transform.position.x + camHalfWidth +7;
+
+        newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+
+        rb.MovePosition(newPos);
     }
+
 
     void Shoot()
     {
