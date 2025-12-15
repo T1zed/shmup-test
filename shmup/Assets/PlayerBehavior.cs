@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerBehavior : MonoBehaviour
 {
@@ -10,15 +11,23 @@ public class PlayerBehavior : MonoBehaviour
 
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public int hp = 3;
+    public int life = 3;
+    public int hp = 1;
 
-    public float fireRate = 0.7f; 
+    public float fireRate = 0.7f;
     private float fireTimer = 0f;
 
-   
+    [Header("Respawn Settings")]
+    public Vector3 respawnOffset = new Vector3(-10f, 0f, 0f);
+    public float invincibleTime = 2f; 
+    private bool isInvincible = false;
+
+    private Renderer rend;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rend = GetComponent<Renderer>();
     }
 
     void Update()
@@ -49,27 +58,50 @@ public class PlayerBehavior : MonoBehaviour
         newPos.y = Mathf.Clamp(newPos.y, -8f, 11f);
 
         float camHalfWidth = Camera.main.orthographicSize * Camera.main.aspect;
-        float minX = Camera.main.transform.position.x - camHalfWidth -7;
-        float maxX = Camera.main.transform.position.x + camHalfWidth +7;
+        float minX = Camera.main.transform.position.x - camHalfWidth - 7;
+        float maxX = Camera.main.transform.position.x + camHalfWidth + 7;
 
         newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
 
         rb.MovePosition(newPos);
     }
 
-
     void Shoot()
     {
-        Instantiate( bulletPrefab,firePoint != null ? firePoint.position : transform.position,Quaternion.identity);
+        Instantiate(bulletPrefab, firePoint != null ? firePoint.position : transform.position, Quaternion.identity);
     }
 
     public void PTakeDamage(int damage)
     {
+        if (isInvincible) return;
+
         hp -= damage;
 
         if (hp <= 0)
         {
-            Destroy(gameObject);
+            StartCoroutine(Respawn());
         }
+    }
+
+    private IEnumerator Respawn()
+    {
+        isInvincible = true;
+
+
+        Vector3 camPos = Camera.main.transform.position;
+        Vector3 respawnPos = new Vector3(camPos.x + respawnOffset.x, respawnOffset.y, 0f);
+        rb.position = respawnPos;
+        life -= 1;
+        float timer = 0f;
+        while (timer < invincibleTime)
+        {
+            rend.enabled = !rend.enabled;
+            timer += 0.2f;
+            yield return new WaitForSeconds(0.2f);
+        }
+        rend.enabled = true;
+        isInvincible = false;
+
+        hp = 1;
     }
 }

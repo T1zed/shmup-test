@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-        life = player.hp;
+        life = player.life;
 
         if (scoreText != null)
             scoreText.text = "Score: " + score;
