@@ -12,6 +12,9 @@ public class PlayerBehavior : MonoBehaviour
     public Transform firePoint;
     public int hp = 3;
 
+    public float fireRate = 0.7f; 
+    private float fireTimer = 0f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -24,9 +27,14 @@ public class PlayerBehavior : MonoBehaviour
 
         movement = new Vector3(x, y, 0f).normalized;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && fireTimer <= 0f)
         {
             Shoot();
+            fireTimer = fireRate;
+        }
+        if (fireTimer > 0f)
+        {
+            fireTimer -= Time.deltaTime;
         }
     }
 
@@ -51,11 +59,7 @@ public class PlayerBehavior : MonoBehaviour
 
     void Shoot()
     {
-        Instantiate(
-            bulletPrefab,
-            firePoint != null ? firePoint.position : transform.position,
-            Quaternion.identity
-        );
+        Instantiate( bulletPrefab,firePoint != null ? firePoint.position : transform.position,Quaternion.identity);
     }
 
     public void PTakeDamage(int damage)
