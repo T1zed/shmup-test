@@ -1,23 +1,32 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyBehavior : MonoBehaviour
 {
     [Header("Stats")]
     public int hp = 1;
-    public float moveSpeed = 5f; 
-    public float verticalSpeed = 3f; 
+    public float moveSpeed = 5f;
+    public float verticalSpeed = 3f;
 
     [Header("Shooting")]
     public GameObject enemyBulletPrefab;
     public float fireRate = 1f;
 
+    [Header("Damage Flash")]
+    public float flashDuration = 0.8f;
+    public float flashInterval = 0.2f; 
+
     private float fireTimer;
     public GameManager gameManager;
     private bool isDead = false;
+    private bool isFlashing = false;
+
+    private Renderer rend;
 
     void Start()
     {
         fireTimer = fireRate;
+        rend = GetComponent<Renderer>();
     }
 
     void Update()
@@ -40,8 +49,32 @@ public class EnemyBehavior : MonoBehaviour
         if (isDead) return;
 
         hp -= damage;
+
+        if (!isFlashing)
+            StartCoroutine(DamageFlash());
+
         if (hp <= 0)
             Die();
+    }
+
+    private IEnumerator DamageFlash()
+    {
+        isFlashing = true;
+        float timer = 0f;
+
+        while (timer < flashDuration)
+        {
+            if (rend != null)
+                rend.enabled = !rend.enabled;
+
+            timer += flashInterval;
+            yield return new WaitForSeconds(flashInterval);
+        }
+
+        if (rend != null)
+            rend.enabled = true;
+
+        isFlashing = false;
     }
 
     private void Die()
@@ -49,7 +82,7 @@ public class EnemyBehavior : MonoBehaviour
         isDead = true;
         if (gameManager != null)
             gameManager.score += 250;
+
         Destroy(gameObject);
     }
 }
-
