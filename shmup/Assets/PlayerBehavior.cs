@@ -21,6 +21,10 @@ public class PlayerBehavior : MonoBehaviour
     public Vector3 respawnOffset = new Vector3(-10f, 0f, 0f);
     public float invincibleTime = 2f; 
     private bool isInvincible = false;
+    [Header("Shooting")]
+    public GameManager gameManager; 
+    public GameObject bulletPrefab2; 
+    public float shoot2Angle = 3f;
 
     private Renderer rend;
 
@@ -39,14 +43,22 @@ public class PlayerBehavior : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && fireTimer <= 0f)
         {
-            Shoot();
-            fireTimer = fireRate;
+            if (gameManager != null && gameManager.score >= 250)
+            {
+                Shoot2();
+                Shoot();
+            }
+            else
+                Shoot();
+
+            fireTimer = fireRate; 
         }
+
+
         if (fireTimer > 0f)
-        {
             fireTimer -= Time.deltaTime;
-        }
     }
+
 
     void FixedUpdate()
     {
@@ -68,8 +80,28 @@ public class PlayerBehavior : MonoBehaviour
 
     void Shoot()
     {
+       
         Instantiate(bulletPrefab, firePoint != null ? firePoint.position : transform.position, Quaternion.identity);
     }
+
+    void Shoot2()
+    {
+        if (fireTimer > 0f) return; 
+        fireTimer = fireRate;
+
+        Vector3 topFirePos = transform.position + Vector3.up * 1f;   
+        Vector3 bottomFirePos = transform.position + Vector3.down * 1f;
+
+        Vector3 topDir = Quaternion.Euler(0, 0, -shoot2Angle) * Vector3.right;  
+        Vector3 bottomDir = Quaternion.Euler(0, 0, shoot2Angle) * Vector3.right; 
+
+        GameObject topBullet = Instantiate(bulletPrefab2, topFirePos, Quaternion.identity);
+        topBullet.transform.right = topDir;
+
+        GameObject bottomBullet = Instantiate(bulletPrefab2, bottomFirePos, Quaternion.identity);
+        bottomBullet.transform.right = bottomDir;
+    }
+
 
     public void PTakeDamage(int damage)
     {
