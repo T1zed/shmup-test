@@ -1,22 +1,31 @@
 using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
+public class EnemyData
+{
+    public GameObject prefab;   
+    public int hp = 1;          
+    public float moveSpeed = 5f; 
+    public float verticalSpeed = 3f; 
+}
+
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Ennemis à spawn")]
-    public GameObject[] enemyPrefabs; 
-    public GameManager gameManager;
+    [Header("Configuration des ennemis")]
+    public EnemyData[] enemies;
 
     [Header("Spawn Settings")]
     public float spawnInterval = 10f; 
+
     private float camHalfWidth;
     private float camHalfHeight;
-
+    public GameManager gameManager;
     void Start()
     {
-
         camHalfHeight = Camera.main.orthographicSize;
         camHalfWidth = camHalfHeight * Camera.main.aspect;
+
         StartCoroutine(SpawnRoutine());
     }
 
@@ -31,11 +40,14 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        if (enemyPrefabs.Length == 0) return;
-        GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        if (enemies.Length == 0) return;
+
+
+        EnemyData data = enemies[Random.Range(0, enemies.Length)];
+
+
         float minX = Camera.main.transform.position.x;
         float maxX = Camera.main.transform.position.x + camHalfWidth;
-
         float minY = Camera.main.transform.position.y - camHalfHeight;
         float maxY = Camera.main.transform.position.y + camHalfHeight;
 
@@ -45,15 +57,16 @@ public class EnemySpawner : MonoBehaviour
             0f
         );
 
-        GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
+        GameObject enemy = Instantiate(data.prefab, spawnPos, Quaternion.identity);
 
         EnemyBehavior enemyBehavior = enemy.GetComponent<EnemyBehavior>();
         if (enemyBehavior != null)
         {
-            enemyBehavior.gameManager = gameManager;
-
+            enemyBehavior.hp = data.hp;
+            enemyBehavior.moveSpeed = data.moveSpeed;
+            enemyBehavior.verticalSpeed = data.verticalSpeed;
+            enemyBehavior.gameManager = gameManager; 
         }
-
 
         int moveType = Random.Range(0, 3); 
         var moveZigzag = enemy.GetComponent<EnemyMoveZigzag>();
@@ -65,4 +78,3 @@ public class EnemySpawner : MonoBehaviour
         if (moveNone != null) moveNone.enabled = (moveType == 2);
     }
 }
-

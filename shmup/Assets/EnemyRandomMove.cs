@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 public class EnemyMoveRandom : MonoBehaviour
 {
@@ -7,12 +8,15 @@ public class EnemyMoveRandom : MonoBehaviour
     public float waitTime = 3f;
     private float camHalfWidth;
     private float camHalfHeight;
-
+    public EnemyBehavior enemy;
+    private bool isDead;
     void Start()
     {
+        isDead = false;
         camHalfHeight = Camera.main.orthographicSize;
         camHalfWidth = camHalfHeight * Camera.main.aspect;
-        StartCoroutine(MovePattern());
+        if (!isDead)
+            StartCoroutine(MovePattern());
     }
 
     IEnumerator MovePattern()
@@ -25,6 +29,7 @@ public class EnemyMoveRandom : MonoBehaviour
         targetPos = GetRandomExitPoint();
         yield return StartCoroutine(MoveToPoint(targetPos));
 
+        isDead = true;
         Destroy(gameObject);
     }
 
@@ -33,7 +38,8 @@ public class EnemyMoveRandom : MonoBehaviour
         while (Vector3.Distance(transform.position, point) > 0.1f)
         {
             Vector3 dir = (point - transform.position).normalized;
-            transform.position += dir * moveSpeed * Time.deltaTime;
+            transform.position += dir * enemy.moveSpeed * Time.deltaTime;
+
             yield return null;
         }
         transform.position = point;
