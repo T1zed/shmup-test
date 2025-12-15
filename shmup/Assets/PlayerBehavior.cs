@@ -15,6 +15,7 @@ public class PlayerBehavior : MonoBehaviour
     public float fireRate = 0.7f; 
     private float fireTimer = 0f;
 
+   
     void Start()
     {
         rb = GetComponent<Rigidbody>();

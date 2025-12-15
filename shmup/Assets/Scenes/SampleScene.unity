@@ -851,6 +851,7 @@ MonoBehaviour:
   bottomY: -7
   enemyBulletPrefab: {fileID: 2199349594815664792, guid: 0d495d2a1654cb342b9ebc79c26cdb83, type: 3}
   fireRate: 1
+  gameManager: {fileID: 1924229543}
 --- !u!65 &908705677
 BoxCollider:
   m_ObjectHideFlags: 0

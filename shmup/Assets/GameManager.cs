@@ -6,7 +6,6 @@ public class GameManager : MonoBehaviour
     public int score = 0;
     public int life = 0;
     public PlayerBehavior player;
-
     public TMP_Text scoreText; 
     public TMP_Text lifeText;  
 
