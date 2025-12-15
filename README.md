@@ -1,2 +1,2 @@
-# shmup-test, genre vrm
+# shmup-test, genre vrm , vrm vrm
 
