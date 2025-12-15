@@ -22,6 +22,9 @@ public class PlayerBehavior : MonoBehaviour
     public float invincibleTime = 2f; 
     private bool isInvincible = false;
     [Header("Shooting")]
+    public GameObject missilePrefab; 
+    public int shoot3UnlockScore = 1000; 
+
     public GameManager gameManager; 
     public GameObject bulletPrefab2; 
     public float shoot2Angle = 3f;
@@ -43,16 +46,28 @@ public class PlayerBehavior : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && fireTimer <= 0f)
         {
-            if (gameManager != null && gameManager.score >= 250)
+            if (gameManager != null)
             {
-                Shoot2();
-                Shoot();
+                if (gameManager.score >= shoot3UnlockScore)
+                {
+                    Shoot3();    
+                    Shoot2();   
+                    Shoot();    
+                }
+                else if (gameManager.score >= 250)
+                {
+                    Shoot2();    
+                    Shoot();    
+                }
+                else
+                {
+                    Shoot();    
+                }
             }
-            else
-                Shoot();
 
-            fireTimer = fireRate; 
+            fireTimer = fireRate;
         }
+
 
 
         if (fireTimer > 0f)
@@ -100,6 +115,13 @@ public class PlayerBehavior : MonoBehaviour
 
         GameObject bottomBullet = Instantiate(bulletPrefab2, bottomFirePos, Quaternion.identity);
         bottomBullet.transform.right = bottomDir;
+    }
+    void Shoot3()
+    {
+        if (missilePrefab == null) return;
+
+        Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
+        Instantiate(missilePrefab, spawnPos, Quaternion.identity);
     }
 
 

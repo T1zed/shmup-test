@@ -37,6 +37,11 @@ public class EnemyMoveRandom : MonoBehaviour
     {
         while (Vector3.Distance(transform.position, point) > 0.1f)
         {
+            if (enemy == null)
+            {
+                Destroy(gameObject);
+                yield break;
+            }
             Vector3 dir = (point - transform.position).normalized;
             transform.position += dir * enemy.moveSpeed * Time.deltaTime;
 
