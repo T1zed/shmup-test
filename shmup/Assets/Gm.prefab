@@ -49,3 +49,5 @@ MonoBehaviour:
   player: {fileID: 0}
   scoreText: {fileID: 0}
   lifeText: {fileID: 0}
+  menuSceneName: MenuScene
+  playSceneName: PlayScene

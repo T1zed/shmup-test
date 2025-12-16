@@ -70,7 +70,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 252d583581cd4ad43bfde1ae9506b67f, type: 2}
+  - {fileID: 2100000, guid: 338081ba321de104fb211d1d1cb07618, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -130,6 +130,8 @@ MonoBehaviour:
   verticalSpeed: 3
   enemyBulletPrefab: {fileID: 2199349594815664792, guid: 0d495d2a1654cb342b9ebc79c26cdb83, type: 3}
   fireRate: 1
+  flashDuration: 0.8
+  flashInterval: 0.2
   gameManager: {fileID: 5313581458250228283, guid: 3b64819ea80763c428207d2486900810, type: 3}
 --- !u!114 &475648346712983698
 MonoBehaviour:
@@ -143,6 +145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3099fc90f4c3aa448a58e84e6020b41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  amplitude: 2
+  frequency: 1
 --- !u!114 &3257945136050740084
 MonoBehaviour:
   m_ObjectHideFlags: 0
