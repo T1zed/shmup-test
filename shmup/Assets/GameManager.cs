@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     public string menuSceneName = "menuScene";
     public string playSceneName = "PlayScene";
     public string playSceneName2 = "PlayScene2";
+
+    private bool isPaused = false;
+
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -22,30 +25,55 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-
-        if (player != null)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            life = player.life;
+            TogglePause();
         }
 
-        if (scoreText != null)
-            scoreText.text = "Score: " + score;
+        if (!isPaused)
+        {
+            if (player != null)
+            {
+                life = player.life;
+            }
 
-        if (lifeText != null)
-            lifeText.text = "Life: " + life;
-        playScene2();
-     
+            if (scoreText != null)
+                scoreText.text = "Score: " + score;
+
+            if (lifeText != null)
+                lifeText.text = "Life: " + life;
+
+            playScene2();
+        }
+    }
+
+    void TogglePause()
+    {
+        isPaused = !isPaused;
+
+        if (isPaused)
+        {
+            Time.timeScale = 0f;
+            Debug.Log("JEU EN PAUSE");
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            Debug.Log("JEU REPRIS");
+        }
     }
 
     public void playscene()
     {
-            SceneManager.LoadScene(playSceneName);
+        Time.timeScale = 1f; 
+        SceneManager.LoadScene(playSceneName);
     }
 
     public void playScene2()
     {
         if (score >= 10000)
         {
+            Time.timeScale = 1f; 
             SceneManager.LoadScene(playSceneName2);
             score = 0;
         }
