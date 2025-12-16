@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     public string menuSceneName = "menuScene";
     public string playSceneName = "PlayScene";
+    public string playSceneName2 = "PlayScene2";
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -32,11 +33,21 @@ public class GameManager : MonoBehaviour
 
         if (lifeText != null)
             lifeText.text = "Life: " + life;
+        playScene2();
+     
     }
 
     public void playscene()
     {
             SceneManager.LoadScene(playSceneName);
+    }
 
+    public void playScene2()
+    {
+        if (score >= 10000)
+        {
+            SceneManager.LoadScene(playSceneName2);
+            score = 0;
+        }
     }
 }

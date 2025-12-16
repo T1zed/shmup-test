@@ -12,6 +12,9 @@ public class EnemyBehavior : MonoBehaviour
     public GameObject enemyBulletPrefab;
     public float fireRate = 1f;
 
+    [Header("Spawn Invincibility")]
+    public float spawnInvincibleTime = 0.5f;
+
     [Header("Damage Flash")]
     public float flashDuration = 0.8f;
     public float flashInterval = 0.2f; 
@@ -20,13 +23,14 @@ public class EnemyBehavior : MonoBehaviour
     public GameManager gameManager;
     private bool isDead = false;
     private bool isFlashing = false;
-
+    private bool isInvincible = true;
     private Renderer rend;
 
     void Start()
     {
         fireTimer = fireRate;
         rend = GetComponent<Renderer>();
+        StartCoroutine(SpawnInvincibility());
     }
 
     void Update()
@@ -76,7 +80,24 @@ public class EnemyBehavior : MonoBehaviour
 
         isFlashing = false;
     }
+    private IEnumerator SpawnInvincibility()
+    {
+        float timer = 0f;
 
+        while (timer < spawnInvincibleTime)
+        {
+            if (rend != null)
+                rend.enabled = !rend.enabled; 
+
+            yield return new WaitForSeconds(0.1f);
+            timer += 0.1f;
+        }
+
+        if (rend != null)
+            rend.enabled = true;
+
+        isInvincible = false;
+    }
     private void Die()
     {
         isDead = true;
