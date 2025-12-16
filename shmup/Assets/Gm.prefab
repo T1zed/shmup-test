@@ -45,11 +45,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   score: 0
-  life: 0
+  life: 3
   player: {fileID: 0}
-  scoreText: {fileID: 0}
-  lifeText: {fileID: 0}
   uiCanvasPrefab: {fileID: 53824942512878991, guid: 34bb3080d3ff146439b33beb22759b8d, type: 3}
+  bossHealthSlider: {fileID: 0}
   menuSceneName: MenuScene
   playSceneName: PlayScene
   playSceneName2: PlayScene2
+  gameover: GameOver

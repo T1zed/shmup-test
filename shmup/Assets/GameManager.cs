@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public int score = 0;
-    public int life = 0;
+    public int life = 3;
     public PlayerBehavior player;
 
     public GameObject uiCanvasPrefab;
@@ -19,8 +19,26 @@ public class GameManager : MonoBehaviour
     public string menuSceneName = "menuScene";
     public string playSceneName = "PlayScene";
     public string playSceneName2 = "PlayScene2";
+    public string gameover = "GameOver";
+    public string victory = "Victory";
 
     private bool isPaused = false;
+    private bool isGameEnding = false;
+
+    public void LoadVictory()
+    {
+        if (isGameEnding) return;
+        isGameEnding = true;
+        SceneManager.LoadScene(victory);
+    }
+
+    public void LoadGameOver()
+    {
+        if (isGameEnding) return;
+        isGameEnding = true;
+        SceneManager.LoadScene(gameover);
+    }
+
 
     private void Awake()
     {
@@ -46,18 +64,15 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        player = GameObject.FindWithTag("Player")?.GetComponent<PlayerBehavior>();
 
         if (uiCanvasInstance != null)
         {
             scoreText = uiCanvasInstance.transform.Find("Score")?.GetComponent<TMP_Text>();
             lifeText = uiCanvasInstance.transform.Find("Life")?.GetComponent<TMP_Text>();
         }
-
-        player = GameObject.FindWithTag("Player")?.GetComponent<PlayerBehavior>();
-
     }
 
     private void Update()
@@ -65,7 +80,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
 
-        if (!isPaused)
+        if (!isPaused && !isGameEnding)
         {
             if (player != null)
                 life = player.life;
@@ -76,8 +91,22 @@ public class GameManager : MonoBehaviour
             if (lifeText != null)
                 lifeText.text = "Life: " + life;
 
-            CheckPlayScene2();
+            string sceneName = SceneManager.GetActiveScene().name;
+            if (sceneName != victory && sceneName != gameover)
+                CheckPlayScene2();
         }
+
+        if (!isGameEnding && life <= 0 && SceneManager.GetActiveScene().name != menuSceneName)
+        {
+            LoadGameOver();
+        }
+    }
+
+
+    public void Retry()
+    {
+        isGameEnding = false; 
+        PlayScene1();
     }
 
     private void TogglePause()
@@ -91,8 +120,18 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         score = 0;
-        SceneManager.LoadScene(playSceneName);
+        life = 3;
+
+        player = null;
+
+        if (uiCanvasInstance != null)
+        {
+            scoreText = uiCanvasInstance.transform.Find("Score")?.GetComponent<TMP_Text>();
+            lifeText = uiCanvasInstance.transform.Find("Life")?.GetComponent<TMP_Text>();
+        }
+        SceneManager.LoadScene(Instance.playSceneName);
     }
+
 
     private void CheckPlayScene2()
     {
@@ -112,4 +151,5 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(playSceneName2);
         }
     }
+    
 }

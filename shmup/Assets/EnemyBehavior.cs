@@ -30,7 +30,7 @@ public class EnemyBehavior : MonoBehaviour
     private bool isFlashing = false;
     private bool isInvincible = true;
     private Renderer rend;
-
+    public string victory = "Victory";
     void Start()
     {
         fireTimer = fireRate;
@@ -78,6 +78,20 @@ public class EnemyBehavior : MonoBehaviour
         if (hp <= 0)
             Die();
     }
+    public void LoadVictoryScene()
+    {
+        StartCoroutine(LoadSceneAsync(victory));
+    }
+
+    private IEnumerator LoadSceneAsync(string sceneName)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        while (!asyncLoad.isDone)
+            yield return null;
+
+    }
+
     public void BossTakeDamage(int damage)
     {
         if (isDead || isInvincible) return;
@@ -89,7 +103,14 @@ public class EnemyBehavior : MonoBehaviour
         if (bossHealthSlider != null)
             bossHealthSlider.value = currentHp;
 
-        if (currentHp <= 0) Die();
+        if (currentHp <= 0)
+        {
+            GameManager.Instance.score += 40000;
+            Die();
+
+            SceneManager.LoadScene(victory);
+        }
+
     }
 
 

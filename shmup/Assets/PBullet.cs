@@ -4,7 +4,7 @@ public class PBullet : MonoBehaviour
 {
     public float speed = 20f;
     public float lifeTime = 4f;
-    public int damage = 1; 
+    public int damage = 400; 
 
     void Start()
     {
