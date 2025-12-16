@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class EnemyData
@@ -24,18 +25,19 @@ public class EnemySpawner : MonoBehaviour
     public Slider bossHealthSlider;
     [Header("Spawn Settings")]
     public float spawnInterval = 10f;
-    //EnemyBehavior eb = boss.GetComponent<EnemyBehavior>();
 
     private float camHalfWidth;
     private float camHalfHeight;
-    public GameManager gameManager;
     private bool bossSpawned = false;
 
     void Start()
     {
         camHalfHeight = Camera.main.orthographicSize;
         camHalfWidth = camHalfHeight * Camera.main.aspect;
-
+        if (bossHealthSlider != null)
+        {
+            bossHealthSlider.gameObject.SetActive(false); 
+        }
         StartCoroutine(SpawnRoutine());
     }
 
@@ -43,7 +45,7 @@ public class EnemySpawner : MonoBehaviour
     {
         while (true)
         {
-            if (gameManager.score <= 1000)
+            if (GameManager.Instance.score <= 1000)
             {
                 SpawnEnemy();
             }
@@ -80,7 +82,7 @@ public class EnemySpawner : MonoBehaviour
             enemyBehavior.hp = data.hp;
             enemyBehavior.moveSpeed = data.moveSpeed;
             enemyBehavior.verticalSpeed = data.verticalSpeed;
-            enemyBehavior.gameManager = gameManager; 
+            enemyBehavior.gameManager = GameManager.Instance; 
         }
 
         int moveType = Random.Range(0, 3); 
@@ -95,34 +97,33 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnBoss()
     {
+        if (SceneManager.GetActiveScene().name != "PlayScene2") return;
         if (bossSpawned) return;
-        if (gameManager == null) return;
-        if (gameManager.score < 1000) return;
+        if (GameManager.Instance == null) return;
+        if (GameManager.Instance.score < 1200) return;
 
-        float spawnX = Camera.main.transform.position.x + camHalfWidth + 2f;
-        float spawnY = Camera.main.transform.position.y;
-        Vector3 spawnPos = new Vector3(spawnX, spawnY, 0f);
+        Vector3 spawnPos = new Vector3(Camera.main.transform.position.x + camHalfWidth + 2f,
+                                       Camera.main.transform.position.y, 0f);
 
         GameObject boss = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+        EnemyBehavior bossBehavior = boss.GetComponent<EnemyBehavior>();
 
-        EnemyBehavior enemyBehavior = boss.GetComponent<EnemyBehavior>();
-        if (enemyBehavior != null)
+        if (bossBehavior != null)
         {
-            enemyBehavior.hp = bossHp;
-            enemyBehavior.moveSpeed = bossMoveSpeed;
-            enemyBehavior.verticalSpeed = bossVerticalSpeed;
-            enemyBehavior.gameManager = gameManager;
 
-            enemyBehavior.bossHealthSlider = bossHealthSlider;
-            if (bossHealthSlider != null)
-            {
-                bossHealthSlider.maxValue = bossHp;
-                bossHealthSlider.value = bossHp;
-            }
+            bossBehavior.bossHealthSlider = GameManager.Instance.bossHealthSlider;
+            bossBehavior.maxHp = bossHp;
+            bossBehavior.currentHp = bossHp;
+            bossBehavior.moveSpeed = bossMoveSpeed;
+            bossBehavior.verticalSpeed = bossVerticalSpeed;
+            bossBehavior.gameManager = GameManager.Instance;
+
         }
 
         bossSpawned = true;
     }
+
+
 
 
 }

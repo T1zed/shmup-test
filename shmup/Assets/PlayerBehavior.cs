@@ -23,7 +23,9 @@ public class PlayerBehavior : MonoBehaviour
     private bool isInvincible = false;
     [Header("Shooting")]
     public GameObject missilePrefab; 
-    public int shoot3UnlockScore = 1000; 
+    [Header("PowerUps")]
+    public bool hasShoot2 = false;
+    public bool hasShoot3 = false;
 
     public GameManager gameManager; 
     public GameObject bulletPrefab2; 
@@ -31,6 +33,13 @@ public class PlayerBehavior : MonoBehaviour
 
     private Renderer rend;
 
+    private void Awake()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.player = this;
+        }
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -46,27 +55,17 @@ public class PlayerBehavior : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && fireTimer <= 0f)
         {
-            if (gameManager != null)
-            {
-                if (gameManager.score >= shoot3UnlockScore)
-                {
-                    Shoot3();    
-                    Shoot2();   
-                    Shoot();    
-                }
-                else if (gameManager.score >= 250)
-                {
-                    Shoot2();    
-                    Shoot();    
-                }
-                else
-                {
-                    Shoot();    
-                }
-            }
+            Shoot(); 
+
+            if (hasShoot2)
+                Shoot2();
+
+            if (hasShoot3)
+                Shoot3();
 
             fireTimer = fireRate;
         }
+
 
 
 
@@ -158,4 +157,19 @@ public class PlayerBehavior : MonoBehaviour
 
         hp = 1;
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("PowerUp1"))
+        {
+            hasShoot2 = true;
+            Destroy(other.gameObject);
+        }
+
+        if (other.CompareTag("PowerUp2"))
+        {
+            hasShoot3 = true;
+            Destroy(other.gameObject);
+        }
+    }
+
 }

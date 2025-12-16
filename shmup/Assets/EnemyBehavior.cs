@@ -39,20 +39,19 @@ public class EnemyBehavior : MonoBehaviour
         currentHp = maxHp;
         if (bossHealthSlider != null)
         {
-            bossHealthSlider.gameObject.SetActive(true);
+            bossHealthSlider.gameObject.SetActive(false); 
             bossHealthSlider.maxValue = maxHp;
-            bossHealthSlider.value = currentHp;
+            bossHealthSlider.value = hp;
         }
     }
 
     void Update()
     {
-        Shoot();
 
-        if (bossHealthSlider != null)
+        Shoot();
+        if (bossHealthSlider != null && bossHealthSlider.gameObject.activeSelf)
         {
             bossHealthSlider.value = currentHp;
-
         }
     }
 
@@ -82,7 +81,8 @@ public class EnemyBehavior : MonoBehaviour
     public void BossTakeDamage(int damage)
     {
         if (isDead || isInvincible) return;
-
+        if (bossHealthSlider != null && !bossHealthSlider.gameObject.activeSelf)
+            bossHealthSlider.gameObject.SetActive(true);
         currentHp -= damage;
         if (!isFlashing) StartCoroutine(DamageFlash());
 
@@ -147,15 +147,16 @@ public class EnemyBehavior : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        if (gameManager != null)
-            gameManager.score += 250;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.score += 250;
+
         if (bossHealthSlider != null)
-        {
             bossHealthSlider.gameObject.SetActive(false);
-        }
 
         Destroy(gameObject);
     }
+
 
 
 }
