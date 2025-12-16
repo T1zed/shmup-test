@@ -28,5 +28,15 @@ public class PBullet : MonoBehaviour
             }
             Destroy(gameObject);
         }
+        if (other.CompareTag("Boss"))
+        {
+            EnemyBehavior enemy = other.GetComponent<EnemyBehavior>();
+
+            if (enemy != null)
+            {
+                enemy.BossTakeDamage(damage);
+            }
+            Destroy(gameObject);
+        }
     }
 }

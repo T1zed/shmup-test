@@ -1,16 +1,16 @@
 using UnityEngine;
 
+
 public class MissileBehavior : MonoBehaviour
 {
     public float speed = 20f;
-    public float lifeTime = 6f;
+    public float lifeTime = 4f; 
     public int damage = 2;
 
     private Transform target;
 
     void Start()
     {
-
         Destroy(gameObject, lifeTime);
 
         EnemyBehavior[] enemies = Object.FindObjectsByType<EnemyBehavior>(FindObjectsSortMode.None);
@@ -31,8 +31,13 @@ public class MissileBehavior : MonoBehaviour
 
         Vector3 direction = (target.position - transform.position).normalized;
 
+        if (direction.x < 0f)
+            Destroy(gameObject);
+
         transform.position += direction * speed * Time.deltaTime;
-        transform.right = direction;
+
+        if (direction != Vector3.zero)
+            transform.right = direction; 
     }
 
     void OnTriggerEnter(Collider other)
@@ -41,11 +46,11 @@ public class MissileBehavior : MonoBehaviour
         {
             EnemyBehavior enemy = other.GetComponent<EnemyBehavior>();
             if (enemy != null)
-            {
                 enemy.TakeDamage(damage);
-            }
+
             Destroy(gameObject);
         }
     }
 }
+
 

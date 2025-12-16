@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 [System.Serializable]
@@ -7,20 +8,29 @@ public class EnemyData
     public GameObject prefab;   
     public int hp = 1;          
     public float moveSpeed = 5f; 
-    public float verticalSpeed = 3f; 
+    public float verticalSpeed = 3f;
+    public BossMooving boss;
 }
 
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Configuration des ennemis")]
     public EnemyData[] enemies;
-
+    [Header("Boss")]
+    public GameObject bossPrefab;
+    public int bossHp = 50;
+    public float bossMoveSpeed = 3f;
+    public float bossVerticalSpeed = 2f;
+    public Slider bossHealthSlider;
     [Header("Spawn Settings")]
-    public float spawnInterval = 10f; 
+    public float spawnInterval = 10f;
+    //EnemyBehavior eb = boss.GetComponent<EnemyBehavior>();
 
     private float camHalfWidth;
     private float camHalfHeight;
     public GameManager gameManager;
+    private bool bossSpawned = false;
+
     void Start()
     {
         camHalfHeight = Camera.main.orthographicSize;
@@ -33,10 +43,15 @@ public class EnemySpawner : MonoBehaviour
     {
         while (true)
         {
-            SpawnEnemy();
+            if (gameManager.score <= 1000)
+            {
+                SpawnEnemy();
+            }
+            SpawnBoss();
             yield return new WaitForSeconds(spawnInterval);
         }
     }
+
 
     void SpawnEnemy()
     {
@@ -77,4 +92,37 @@ public class EnemySpawner : MonoBehaviour
         if (moveRandom != null) moveRandom.enabled = (moveType == 1);
         if (moveNone != null) moveNone.enabled = (moveType == 2);
     }
+
+    void SpawnBoss()
+    {
+        if (bossSpawned) return;
+        if (gameManager == null) return;
+        if (gameManager.score < 1000) return;
+
+        float spawnX = Camera.main.transform.position.x + camHalfWidth + 2f;
+        float spawnY = Camera.main.transform.position.y;
+        Vector3 spawnPos = new Vector3(spawnX, spawnY, 0f);
+
+        GameObject boss = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+
+        EnemyBehavior enemyBehavior = boss.GetComponent<EnemyBehavior>();
+        if (enemyBehavior != null)
+        {
+            enemyBehavior.hp = bossHp;
+            enemyBehavior.moveSpeed = bossMoveSpeed;
+            enemyBehavior.verticalSpeed = bossVerticalSpeed;
+            enemyBehavior.gameManager = gameManager;
+
+            enemyBehavior.bossHealthSlider = bossHealthSlider;
+            if (bossHealthSlider != null)
+            {
+                bossHealthSlider.maxValue = bossHp;
+                bossHealthSlider.value = bossHp;
+            }
+        }
+
+        bossSpawned = true;
+    }
+
+
 }
