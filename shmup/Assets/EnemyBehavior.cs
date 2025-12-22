@@ -105,7 +105,7 @@ public class EnemyBehavior : MonoBehaviour
 
         if (currentHp <= 0)
         {
-            GameManager.Instance.score += 40000;
+            GameManager.Instance.score += 10000;
             Die();
 
             SceneManager.LoadScene(victory);

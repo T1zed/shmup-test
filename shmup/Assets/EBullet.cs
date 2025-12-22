@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class EBullet : MonoBehaviour
 {
     public float speed = 20f;

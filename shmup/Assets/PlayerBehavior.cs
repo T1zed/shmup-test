@@ -13,9 +13,11 @@ public class PlayerBehavior : MonoBehaviour
     public Transform firePoint;
     public int life = 3;
     public int hp = 1;
-
+    
     public float fireRate = 0.7f;
     private float fireTimer = 0f;
+    [Header("Cheats / Debug")]
+    public bool invulnerable = false; 
 
     [Header("Respawn Settings")]
     public Vector3 respawnOffset = new Vector3(-10f, 0f, 0f);
@@ -65,10 +67,6 @@ public class PlayerBehavior : MonoBehaviour
 
             fireTimer = fireRate;
         }
-
-
-
-
         if (fireTimer > 0f)
             fireTimer -= Time.deltaTime;
     }
@@ -126,7 +124,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public void PTakeDamage(int damage)
     {
-        if (isInvincible) return;
+        if (isInvincible || invulnerable) return;
 
         hp -= damage;
 
@@ -135,6 +133,7 @@ public class PlayerBehavior : MonoBehaviour
             StartCoroutine(Respawn());
         }
     }
+
 
     private IEnumerator Respawn()
     {
@@ -163,12 +162,14 @@ public class PlayerBehavior : MonoBehaviour
         {
             hasShoot2 = true;
             Destroy(other.gameObject);
+            GameManager.Instance.score += 250;
         }
 
         if (other.CompareTag("PowerUp2"))
         {
             hasShoot3 = true;
             Destroy(other.gameObject);
+            GameManager.Instance.score = 250;
         }
     }
 
